@@ -1,0 +1,41 @@
+SAVEBOTS LEVEL 1 - FINAL PACK FOR EMO - EVERYTHING HE NEEDS THUS FAR
+Echo's Binary Race - Plan, Plan, Plan, Then Fable
+
+ART - ALL LOCKED:
+1. Echo Hero - 01_Echo_hero.webp - gunmetal robot, black hoodie ECHO neon green, H Si Au badges, rainbow sleeve, code eyes, beanie, headphones. DO NOT REDESIGN.
+2. Background - 02_Background_track.webp - black #0c0a09, starfield nebula purple/blue, 2 comets, binary rain more opaque, electric neon green 3-lane track with circuit lines, mint gate. ONE WORLD ONLY.
+3. Kali Final - 03_Kali_final.webp - BLUE dragon, rounder cuter face, larger smile, binary in eyes SOFT not distracting, NO beanie, extra row of horns on top + 2 side horns, wings slightly bigger with neon green glow (glow can be CSS/sprite glow in code), black hoodie with OA circuit design in glowing green, KALI neon green, left arm patch = Rasta alien (red yellow green) like Alienware alien emoji, faded bottom. DO NOT INVENT ANOTHER KALI. USE THIS ONE.
+
+GAMEPLAY - LEVEL 1 ONLY:
+- 60 sec, 3 lives, target 0-7, 3 bit slots, catch in order, +100 correct, -2 sec wrong, NO game over
+- Gate every 15 sec: 3-choice binary question, right = boost, wrong = friendly 1-liner, gate opens ANYWAY
+- Kali checkpoint at 45 sec: 1 safety question, same no-fail rule, use Kali final art for checkpoint panel
+- End: score, Bolt Points for FINISHING ONLY, decimal/binary summary, 3 lines of code
+
+LESSONS:
+Binary, Code, AI, Safety, Python Basics
+Python: Real Python, zero install, stdlib only. End screen: print(int("101", 2)) = 5
+Level 2: for i in range(3): print("Echo says hi")
+Level 3: if password == "strong": print("Safe")
+Level 4: beat = [1, 0, 1, 1]
+Level 5: print(hex(255))
+
+RULES - NO SHADY SHIT:
+No loot boxes, no streaks, no FOMO, no pay-to-win, no autoplay, no dark patterns. Bolt Points only for finishing. Gate always opens. If it feels like hustle, CUT IT. Talk in room, leave it in GitHub, if not in GitHub it didn't happen. Nobody promises money or scope without boss.
+
+ARCHITECTURE:
+Game Loop, Input, UI, Level 1 rules SEPARATED. LEVELS registry with Level 1 active, placeholders for Level 2-5. Do NOT build Level 2 yet. Do NOT start Level 2 until Level 1 is played and kids feedback is in.
+
+CHECKLIST - HE HAS EVERYTHING THUS FAR?
+[YES] Echo art
+[YES] Background art
+[YES] Kali art - final combo version
+[YES] Graphics Outline
+[YES] Rundown
+[YES] Fable Prompt with Python
+[YES] Style Guide
+[ ] Kali in-game sprite / bust for checkpoint panel - can be cropped from 03_Kali_final.webp for now
+[ ] Title Logo - can be text in code for now
+[ ] UI Icons - can be code-drawn for now
+
+If he asks for more, he can build with these 3 arts + code-drawn UI. No more art needed to START.
