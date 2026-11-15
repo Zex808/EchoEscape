@@ -2,7 +2,7 @@
 
 **Intended recipient: Fable 5.2.** Feed this prompt to Fable 5.2 to generate the build.
 
-Synthesized from: `00_README_FOR_EMO.txt`, `00_RUNDOWN_PLAN_PLAN_PLAN.txt`, `FABLE_PROMPT_Echo_Level1_Python.txt`, `STYLE_GUIDE_Echo.txt`, `01_Echo_hero.png.webp`, `02_Background_track.png.webp`, plus decisions confirmed by the requester (real Python execution, user-supplied Kali art, a play-again button, Fable 5.2 as the build target). See the accompanying chat message for source notes, conflicts, an asset checklist, and remaining gaps.
+Synthesized from: `00_README_FOR_EMO.txt`, `00_RUNDOWN_PLAN_PLAN_PLAN.txt`, `FABLE_PROMPT_Echo_Level1_Python.txt`, `STYLE_GUIDE_Echo.txt`, `01_Echo_hero.png.webp`, `02_Background_track.png.webp`, the later "final pack" supersession (`00_RUNDOWN_FINAL.txt`, `01_GRAPHICS_OUTLINE_LOCKED.txt`, `02_FABLE_PROMPT_FINAL.txt`, `03_Kali_final.webp`), plus decisions confirmed by the requester (real stdlib-only Python execution, a play-again button, Fable 5.2 as the build target). Kali's design is now locked via `03_Kali_final.webp` — the earlier "art pending" note is resolved. See the accompanying chat message for source notes, conflicts, an asset checklist, and remaining gaps.
 
 ---
 
@@ -72,7 +72,8 @@ Direct from `00_RUNDOWN_PLAN_PLAN_PLAN.txt:46-54` and `00_README_FOR_EMO.txt:22`
 ## 8. Story & characters
 
 - **Echo** — small robot companion, **the established reference image is final; do not redesign.** Gunmetal metal body, large round eyes showing scrolling green code/digit rain, antenna, black knit beanie, black over-ear headphones, black zip hoodie with "ECHO" in bright neon green bubble lettering across the chest, three hexagonal badges above the text reading **H / Si / Au**, a rainbow-stripe patch on the sleeve, visible articulated metal hands (reference shows Echo holding an open laptop with green code on-screen) (`00_RUNDOWN_PLAN_PLAN_PLAN.txt:4-12`, `01_Echo_hero.png.webp`, `STYLE_GUIDE_Echo.txt:3`).
-- **Kali** — named in the design docs as the digital-safety checkpoint character at the 45-second mark (`00_RUNDOWN_PLAN_PLAN_PLAN.txt:26,37,65`). **No reference image or visual description of Kali exists in this repo** — the planning checklist itself still lists "Kali next graphic?" as an open item (`00_RUNDOWN_PLAN_PLAN_PLAN.txt:65`). The requester will supply Kali reference art separately. **Until that art is provided, build the checkpoint as a text/UI moment attributed to "Kali" with no invented character design**, and leave an obvious slot (e.g. a named image placeholder/asset key) for the art to drop into once supplied.
+- **Kali** — the digital-safety checkpoint character at the 45-second mark. **Design is now LOCKED via `03_Kali_final.webp` — do not invent another Kali** (`00_RUNDOWN_FINAL.txt:7,30-32`, `01_GRAPHICS_OUTLINE_LOCKED.txt:4`). A small blue dragon: rounded, cute scaled face with a large genuine smile; large green eyes containing soft, non-distracting binary-digit patterns; no beanie; a row of small horns across the top of the head plus two larger side horns; bat-like wings, slightly oversized, with a neon-green CSS/sprite glow; a black hoodie bearing a glowing green circuit-board line pattern ("OA circuit design" per the source doc — meaning unconfirmed, reproduce the pattern shown in the reference rather than inferring an acronym) and "KALI" in the same neon-green bubble lettering style as Echo's hoodie text; a round shoulder patch on the left arm showing a green alien head on a red/yellow/green ("Rasta") striped background, styled like the Alienware alien logo; the figure fades out toward the bottom edge in the reference (it's a bust/portrait crop, not a full body). Same space/nebula backdrop as Echo's own reference image.
+- **Outstanding Kali asset, per the team's own checklist** (`00_RUNDOWN_FINAL.txt:37`): a cropped in-game sprite/bust for the checkpoint panel does not exist yet as a separate file — crop one from `03_Kali_final.webp` for this build; a dedicated sprite is not required to ship.
 - **No other named characters appear anywhere in the repository.**
 
 ## 9. Visual style
@@ -90,11 +91,12 @@ Direct from `00_RUNDOWN_PLAN_PLAN_PLAN.txt:46-54` and `00_README_FOR_EMO.txt:22`
 ## 11. Interface & required art/audio assets
 
 - **UI must show, in-game, without relying on external assets beyond what's listed:** 3 bit slots, falling bits, lane track, lives indicator, 60-second timer, score, gate question UI (3 choices), Kali checkpoint UI (1 question), end screen (score, Bolt Points, binary/decimal summary, 3-line Python block, Play Again button), audio toggle control.
-- **Provided assets:**
-  - `01_Echo_hero.png.webp` — Echo reference art (locked).
-  - `02_Background_track.png.webp` — world/background reference art (locked), labeled as "binary more opaque version."
-- **Pending from requester:** Kali reference art (confirmed incoming — see §8; use a placeholder slot until delivered).
-- **Not provided, needed, and not found anywhere in this repo:** UI/HUD mockups, font choice, icon set, sound/music files. See the checklist below.
+- **Provided assets, all locked, do not redesign** (`00_RUNDOWN_FINAL.txt:4-7`):
+  - `01_Echo_hero.png.webp` — Echo reference art.
+  - `02_Background_track.png.webp` — world/background reference art, labeled as "binary more opaque version."
+  - `03_Kali_final.webp` — Kali reference art (see §8).
+- **Explicitly deferred by the team itself, with a stated fallback** (`00_RUNDOWN_FINAL.txt:37-41`, `01_GRAPHICS_OUTLINE_LOCKED.txt:5`): a cropped Kali in-game sprite/bust (fallback: crop from `03_Kali_final.webp`), a title logo (fallback: text in code), and UI icons (fallback: code-drawn). The team's own note: *"No more art needed to START."*
+- **Not provided, needed, and not found anywhere in this repo:** sound/music files. See the checklist below.
 
 ## 12. Technical requirements
 
@@ -107,8 +109,8 @@ Direct from `00_RUNDOWN_PLAN_PLAN_PLAN.txt:46-54` and `00_README_FOR_EMO.txt:22`
   - **Level 1 rules**
   - **A `LEVELS` registry** holding Level 1 (active/implemented) plus stub entries for Levels 2–5 (inactive, clearly marked as not implemented, must not be reachable or break the game if selected).
   This separation exists specifically so another developer or model can extend it later without rewriting Level 1.
-- **Python teaching mechanic — real execution, confirmed by requester.** The kid's 3 lines must actually run as real Python, not a simulated/canned output, and nothing may require the kid (or a parent) to manually install anything.
-  - Use **Pyodide** (a WebAssembly CPython build) loaded via a single `<script>` tag pointing at a CDN (e.g. the official `pyodide.js` CDN URL), initialized automatically on page load with a visible "loading Echo's brain…" state while it downloads — this is the only sanctioned exception to "single file, no dependencies," and it's the only practical way to get real Python running in-browser with zero manual install.
+- **Python teaching mechanic — real execution, stdlib only.** Confirmed by both the requester and the team's own final doc: **"Real Python, zero install, stdlib only"** (`00_RUNDOWN_FINAL.txt:17`, `02_FABLE_PROMPT_FINAL.txt:11`). The kid's 3 lines must actually run as real Python, not a simulated/canned output; nothing may require the kid (or a parent) to manually install anything; and nothing in the Python snippets may depend on a third-party package — every snippet across Levels 1–5 (`print`, `int`, `for`/`range`, `if`/`else`, lists, `hex`) is pure standard-library/builtin Python, so this is achievable without ever installing a package.
+  - Use **Pyodide** (a WebAssembly CPython build) loaded via a single `<script>` tag pointing at a CDN (e.g. the official `pyodide.js` CDN URL), initialized automatically on page load with a visible "loading Echo's brain…" state while it downloads — this is the only sanctioned exception to "single file, no dependencies," and it's the only practical way to get real, zero-install Python running in-browser. Do not call Pyodide's `micropip` or load any non-stdlib package — none is needed for any Level 1–5 snippet.
   - The kid's typed/tapped code is passed to Pyodide's `runPython`, and the **actual** printed result is what's displayed (e.g. running `print(int("101", 2))` must genuinely produce `5` from the Python interpreter, not a hardcoded string).
   - **Trade-offs to flag to the team, since they affect "opens directly, no install" in practice:** (1) first load requires an internet connection to fetch the Pyodide runtime (several MB) — the game is not fully offline-capable the first time it runs; (2) there will be a short loading delay before the Python-dependent parts of the end screen are usable; (3) this is a real external dependency (a CDN fetch), which is a deliberate, confirmed exception to the "no unnecessary dependencies" principle, not an oversight.
   - If Fable 5.2 cannot wire up Pyodide reliably, flag it back rather than silently falling back to a simulated/fake result — the "real Python" requirement is explicit and non-negotiable per the requester.
@@ -124,9 +126,9 @@ The build is done when all of the following are true:
 - [ ] A full round runs: 60-second timer counts down, 3 lives tracked, bits fall and are catchable left-to-right into 3 slots.
 - [ ] Correct catch: +100 score, chime (if audio on), slot lights mint. Wrong catch: shake, −2s, **no life lost, no game over ever.**
 - [ ] A gate event fires every 15 seconds with a 3-choice question; right answer boosts speed; wrong answer shows a one-line explanation and **the gate opens regardless.**
-- [ ] A distinct Kali checkpoint fires at 45 seconds with one safety question, same no-fail behavior as gates (placeholder presentation acceptable until Kali art is supplied — see §8).
+- [ ] A distinct Kali checkpoint fires at 45 seconds with one safety question, same no-fail behavior as gates, using the locked Kali design from `03_Kali_final.webp` (a cropped bust/sprite is acceptable — see §8).
 - [ ] End screen displays: score, Bolt Points (awarded for finishing only), a binary→decimal summary, the 3-line Python block, and a working **Play Again** button that starts a fresh round.
-- [ ] The 3-line Python block actually executes via a real Python runtime (Pyodide) and displays its genuine output — `print(int("101", 2))` must be computed, not hardcoded.
+- [ ] The 3-line Python block actually executes via a real Python runtime (Pyodide, stdlib only, no `micropip`/package installs) and displays its genuine output — `print(int("101", 2))` must be computed, not hardcoded.
 - [ ] Audio is off by default; a visible manual toggle turns it on; nothing plays automatically.
 - [ ] No loot boxes, streaks, countdown-pressure dark patterns, or pay-to-win mechanic exists anywhere in the build.
 - [ ] Code contains a `LEVELS` registry with Level 1 playable and Levels 2–5 present only as inert placeholders — selecting/encountering them must not crash or unlock gameplay.

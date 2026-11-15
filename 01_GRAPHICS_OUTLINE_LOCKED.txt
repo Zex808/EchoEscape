@@ -1,0 +1,7 @@
+GRAPHICS OUTLINE - LEVEL 1 - LOCKED
+Echo: LOCKED - 01_Echo_hero.webp
+Background: LOCKED - 02_Background_track.webp
+Kali: LOCKED - 03_Kali_final.webp - Blue, rounder face, larger smile, soft binary eyes, no beanie, extra horns, bigger glowing wings, OA circuit hoodie, Rasta alien patch, faded bottom
+UI: Code-drawn for now - bit slots, falling bits, gate panel, Kali checkpoint panel, Bolt Points icon, timer, lives, buttons
+End Screen: Same world darker, Echo jumping, Code panel with Python
+Do NOT make Level 2-5 art yet. Do NOT make merch yet.
