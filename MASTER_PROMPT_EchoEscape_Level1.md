@@ -28,7 +28,7 @@ One round = 60 seconds, 3 lives, no game-over state (`00_RUNDOWN_PLAN_PLAN_PLAN.
 1. Binary digits (bits) fall down a **3-lane neon track**. The target is a binary number in the 0–7 range, shown in **3 bit slots**.
 2. Player catches falling bits **left to right, in order**, to fill the 3 slots.
    - Correct catch: **+100 points**, a chime, the slot lights mint green.
-   - Wrong catch: a shake effect, **−2 seconds** off the clock. **No life lost, no game over.**
+   - Wrong catch: a shake effect, **−2 seconds** off the clock, **no game over.** As built in `index.html`: a wrong catch also uses up one of the 3 lives, and when the last one goes all three recharge. The source docs ask for both "3 lives" and "NO game over" without saying what a life is for, so this is a build decision awaiting sign-off — flip `wrongCostsLife` in the Level 1 rules config to make lives never drop.
 3. **Gate event every 15 seconds:** a 3-choice binary question.
    - Correct → speed boost.
    - Incorrect → a one-line friendly explanation is shown, **and the gate opens anyway.** No-fail is absolute.
@@ -114,6 +114,7 @@ Direct from `00_RUNDOWN_PLAN_PLAN_PLAN.txt:46-54` and `00_README_FOR_EMO.txt:22`
   - The kid's typed/tapped code is passed to Pyodide's `runPython`, and the **actual** printed result is what's displayed (e.g. running `print(int("101", 2))` must genuinely produce `5` from the Python interpreter, not a hardcoded string).
   - **Trade-offs to flag to the team, since they affect "opens directly, no install" in practice:** (1) first load requires an internet connection to fetch the Pyodide runtime (several MB) — the game is not fully offline-capable the first time it runs; (2) there will be a short loading delay before the Python-dependent parts of the end screen are usable; (3) this is a real external dependency (a CDN fetch), which is a deliberate, confirmed exception to the "no unnecessary dependencies" principle, not an oversight.
   - If Fable 5.2 cannot wire up Pyodide reliably, flag it back rather than silently falling back to a simulated/fake result — the "real Python" requirement is explicit and non-negotiable per the requester.
+  - **As built in `index.html`:** Pyodide is pinned to `0.29.5` and runs in a background Web Worker (so loading never stutters the race, and an endless loop can be stopped). Do not bump it to the 314+ line without re-testing: that line only runs in a "module" worker, which browsers refuse to start when the game is opened by double-clicking the file.
 
 ## 13. Acceptance criteria (playable, testable result)
 
@@ -124,7 +125,7 @@ The build is done when all of the following are true:
 - [ ] Echo's appearance matches the locked reference description in §8 without redesign.
 - [ ] One world, three framings (start/race/gate), matching §9 — no extra backgrounds.
 - [ ] A full round runs: 60-second timer counts down, 3 lives tracked, bits fall and are catchable left-to-right into 3 slots.
-- [ ] Correct catch: +100 score, chime (if audio on), slot lights mint. Wrong catch: shake, −2s, **no life lost, no game over ever.**
+- [ ] Correct catch: +100 score, chime (if audio on), slot lights mint. Wrong catch: shake, −2s, **no game over ever** (lives recharge when they run out — see §3).
 - [ ] A gate event fires every 15 seconds with a 3-choice question; right answer boosts speed; wrong answer shows a one-line explanation and **the gate opens regardless.**
 - [ ] A distinct Kali checkpoint fires at 45 seconds with one safety question, same no-fail behavior as gates, using the locked Kali design from `03_Kali_final.webp` (a cropped bust/sprite is acceptable — see §8).
 - [ ] End screen displays: score, Bolt Points (awarded for finishing only), a binary→decimal summary, the 3-line Python block, and a working **Play Again** button that starts a fresh round.
