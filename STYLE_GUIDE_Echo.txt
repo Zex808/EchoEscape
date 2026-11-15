@@ -1,0 +1,6 @@
+Echo Style Guide
+Background: #0c0a09 black, mint #34F0A4, electric neon green #00FF88, deep blue #1A3CFF / purple nebula
+Echo: gunmetal, black hoodie, ECHO neon green, H Si Au badges, rainbow sleeve
+Background: starfield nebula, 2 comets, binary rain more opaque, 3-lane track with circuit lines, mint gate
+Rules: No fail, gate always opens, Bolt Points only for finishing, no hustle.
+Python: print(int("101", 2)) = 5

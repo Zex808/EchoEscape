@@ -1,0 +1,67 @@
+SAVEBOTS - LEVEL 1 RUNDOWN - PLAN BEFORE FABLE
+Echo's Binary Race - Plan, Plan, Plan, Then Fable
+
+PLAN 1 - CHARACTER: ECHO
+- Small robot, realistic brushed gunmetal, NOT furry, NOT scary
+- Eyes: large round, scrolling green code rain
+- Black knit beanie, over-ear black headphones
+- Black zip hoodie, realistic fabric
+  - ECHO in bright neon green across chest
+  - 3 hex badges: H, Si, Au
+  - Rainbow stripe red/yellow/green on sleeve
+- Do NOT redesign Echo. Reuse this one.
+
+PLAN 2 - WORLD: ONE WORLD ONLY
+- Deep black #0c0a09, starfield nebula purple + blue, 2 comets with trails
+- Binary 0s and 1s falling like rain, more opaque, still BEHIND track
+- Electric neon green 3-lane track, circuit lines etched in, lane dots
+- Big glowing mint gate in distance
+- 3 views, same world: START wide, RACE track, GATE darker zoomed
+- Do NOT make 10 backgrounds.
+
+PLAN 3 - GAMEPLAY: LEVEL 1 ONLY
+- 60 sec, 3 lives, target 0-7, 3 bit slots
+- Bits fall, catch left-to-right. Correct +100, chime, slot lights mint. Wrong: shake, -2 sec, NO game over.
+- Gate every 15 sec: 3-choice binary question. Right = speed boost. Wrong = 1-line friendly explanation, gate opens ANYWAY.
+- Kali checkpoint at 45 sec: 1 security question, same no-fail rule.
+- End: score, Bolt Points for FINISHING ONLY, decimal/binary summary, 3 lines of code.
+- Manual audio toggle only, no autoplay.
+- Architecture: Game Loop, Input, UI, Level 1 rules SEPARATED. LEVELS registry with Level 1 active, placeholders for Level 2 Loop, Level 3 Cipher, Level 4 Echo Beat, Level 5 Hex. Do NOT build those yet.
+
+PLAN 4 - LESSONS: WHAT WE TEACH
+This is NOT hustle. NOT grind. NOT loot boxes. NOT streaks. NOT FOMO. NOT pay-to-win.
+We teach:
+1. BINARY - how computers count with 0 and 1
+2. CODE - 3 lines behind the game they can read
+3. AI - Ask Echo explains, does NOT do homework
+4. SAFETY - Kali: which password is safest, should you click this link
+5. PYTHON BASICS - the vital skill for next gen, taught as a tool
+   Level 1: print(int("101", 2)) = 5  -> binary becomes a real number
+   Level 2: for i in range(3): print("Echo says hi") -> loop
+   Level 3: if password == "strong": print("Safe") else: print("Try again") -> if/else + safety
+   Level 4: beat = [1, 0, 1, 1] -> lists + music
+   Level 5: print(hex(255)) -> hex, one step up
+   Rule: You write 3 lines, you see Echo do it, you save it, you check it.
+
+PLAN 5 - RULES: NO SHADY SHIT
+Boss quit a web-design job over gamification aimed at kids. This is absolute.
+- No loot boxes, no streaks, no punishing timers, no pay-to-win
+- No-fail gates: wrong answer gets friendly explanation, gate opens anyway
+- Bolt Points only for finished learning
+- No autoplay, no dark patterns, no "come back or lose it"
+- If a feature feels like hustle, CUT IT.
+- Talk in the room, leave it in GitHub, if not in GitHub it didn't happen.
+- Nobody promises money or scope without the boss.
+
+PLAN 6 - FABLE FEED
+- Feed Fable ONLY after we agree on Plans 1-5.
+- One HTML file, runs immediately, phone friendly, high contrast.
+- Use images as REFERENCE, not as direct background if it hurts readability. In-game background can be code-drawn simpler version so Echo pops.
+- Do NOT start Level 2 until Level 1 is played and kids feedback is in.
+
+CHECKLIST BEFORE WE FEED FABLE:
+[ ] Echo locked?
+[ ] Background locked? (binary more opaque version)
+[ ] Kali next graphic?
+[ ] Python snippets approved?
+[ ] No hustle mechanics slipped in?
