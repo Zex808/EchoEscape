@@ -1,0 +1,11 @@
+Build Level 1 'Echo's Binary Race' as single-file HTML5 game for kids 7-12. Use attached 3 images as references: Echo, Background, Kali final. Do not redesign any of them.
+
+ECHO: gunmetal robot, black hoodie ECHO neon green, H Si Au badges, rainbow sleeve, code eyes.
+BACKGROUND: black #0c0a09, starfield nebula, 2 comets, binary rain more opaque, electric neon green 3-lane track, mint gate.
+KALI: blue dragon, rounder face, larger smile, soft binary eyes, no beanie, extra horns, bigger glowing wings (glow via CSS), black hoodie with OA circuit design, KALI neon green, Rasta alien patch on left arm.
+
+GAMEPLAY: 60 sec, 3 lives, target 0-7, 3 bit slots, +100 correct, -2 sec wrong, gate every 15 sec, Kali checkpoint at 45 sec safety question, end screen score + Bolt Points + Python code print(int("101", 2)) = 5
+
+ARCHITECTURE: Game Loop, Input, UI, Level 1 rules separated. LEVELS registry placeholders for Level 2-5.
+CONSTRAINTS: One file, no autoplay, manual toggle, no loot boxes, no streaks, no hustle, high contrast, phone friendly.
+PYTHON: Real Python, zero install, stdlib only.
