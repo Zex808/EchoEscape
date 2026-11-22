@@ -199,6 +199,46 @@ code { font-family: var(--mono); font-weight: 800; background: #10241b; border: 
 #btn-again { margin-top: 12px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+/* ---------- onboarding (subject / avatar / course / mission) ---------- */
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+@media (max-width: 420px) { .choice-grid { grid-template-columns: 1fr; } }
+.pick {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+  padding: 14px 10px; min-height: 96px; font-size: 16px;
+}
+.pick .pick-ico { font-size: 28px; line-height: 1; }
+.pick.selected { background: var(--mint); color: #04140c; }
+.pick .pick-sub { font-size: 12px; font-weight: 600; opacity: 0.85; }
+.steps { display: flex; gap: 6px; margin-bottom: 10px; list-style: none; padding: 0; }
+.steps li { flex: 1; height: 5px; border-radius: 3px; background: #2a332e; }
+.steps li.done { background: var(--mint); }
+.steps li.now { background: var(--green); }
+#btn-onboard-back { margin-top: 10px; }
+
+/* ---------- speed control ---------- */
+.speed-row { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+.speed-row label { font-size: 14px; font-weight: 700; flex: none; }
+.speed-row input[type="range"] { flex: 1 1 auto; accent-color: var(--mint); height: 28px; }
+.speed-row b { font: 800 16px var(--mono); flex: none; width: 48px; text-align: right; }
+.speed-row .btn { flex: none; min-height: 40px; padding: 6px 10px; font-size: 13px; }
+
+/* ---------- progress / rewards ---------- */
+.guest-note { font-size: 12px; color: var(--dim); background: #050807; border-left: 4px solid var(--sky); border-radius: 8px; padding: 6px 10px; margin: 0 0 10px; }
+.inventory { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+.item-chip {
+  display: flex; align-items: center; gap: 6px; font: 700 13px var(--sans);
+  background: #050807; border: 1.5px solid var(--line); border-radius: 999px; padding: 5px 10px;
+}
+.item-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); }
+.item-chip.active .dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.item-chip time { color: var(--dim); font-family: var(--mono); font-size: 11px; }
+#points-total { color: var(--mint); font-weight: 900; }
+
+/* ---------- screen transitions: fade instead of popping in/out ---------- */
+.overlay { opacity: 0; transition: opacity 0.22s ease; }
+.overlay:not([hidden]) { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .overlay { transition: none; } }
+
 /* ---------- wide screens (desktop, or a phone held sideways) ----------
    The HUD splits in two and moves to the top corners, so it never covers the gate. */
 @media (min-width: 900px), (orientation: landscape) and (max-height: 520px) {
@@ -274,9 +314,45 @@ code { font-family: var(--mono); font-weight: 800; background: #10241b; border: 
       </ol>
       <p class="example"><span>Example</span>5 = 4 + 0 + 1, so catch <b class="nowrap"><code>1</code> <code>0</code> <code>1</code></b></p>
       <p class="note">Tap a lane or press the &larr; &rarr; keys to move Echo. Mistakes are OK: the race never ends early and every gate opens.</p>
+      <p class="guest-note">Guest progress: <b id="title-points"><span id="points-total">0</span> points</b>, saved on this device only. <span id="title-sync-note"></span></p>
+      <div class="speed-row">
+        <label for="speed-title">Race speed</label>
+        <input type="range" id="speed-title" min="0.5" max="1.5" step="0.05">
+        <b id="speed-title-val">0.75x</b>
+        <button id="speed-title-reset" class="btn ghost" type="button">Reset</button>
+      </div>
       <button id="btn-play" class="btn primary big" type="button">Play</button>
+      <button id="btn-inventory" class="btn ghost" type="button">My rewards</button>
       <p class="note small">Sound is off. The speaker button at the top turns it on.</p>
       <ul id="levels" class="levels" aria-label="Levels"></ul>
+    </div>
+  </section>
+
+  <section id="screen-onboard" class="overlay" hidden aria-labelledby="onboard-h">
+    <div class="card" role="dialog" aria-modal="true" aria-labelledby="onboard-h">
+      <ul class="steps" id="onboard-steps" aria-hidden="true"><li></li><li></li><li></li><li></li></ul>
+      <p class="kicker" id="onboard-kicker"></p>
+      <h2 id="onboard-h"></h2>
+      <p class="note" id="onboard-note"></p>
+      <div class="choice-grid" id="onboard-grid" role="group" aria-label="Choose one"></div>
+      <button id="btn-onboard-back" class="btn ghost" type="button">Back</button>
+    </div>
+  </section>
+
+  <section id="screen-inventory" class="overlay" hidden aria-labelledby="inv-h">
+    <div class="card">
+      <p class="kicker">My rewards</p>
+      <h2 id="inv-h">Points &amp; power-ups</h2>
+      <p class="guest-note">This is local guest progress stored in this browser's storage. To sync points and rewards to a real signed-in account across devices, the game would need a backend (an account server + API) to call instead of <code>localStorage</code> &mdash; there isn't one yet.</p>
+      <p><b><span id="inv-points">0</span> points</b></p>
+      <h3>Unlocked trims</h3>
+      <div class="inventory" id="inv-items"></div>
+      <h3>Power-ups</h3>
+      <div class="inventory" id="inv-shop"></div>
+      <h3>Active now</h3>
+      <div class="inventory" id="inv-active"></div>
+      <p class="note" id="inv-none" hidden>No power-ups active right now.</p>
+      <button id="btn-inventory-close" class="btn primary big" type="button">Back</button>
     </div>
   </section>
 
@@ -301,6 +377,12 @@ code { font-family: var(--mono); font-weight: 800; background: #10241b; border: 
     <div class="card" role="dialog" aria-modal="true" aria-labelledby="pause-h">
       <h2 id="pause-h">Paused</h2>
       <p>The clock is stopped. Take your time.</p>
+      <div class="speed-row">
+        <label for="speed-pause">Race speed</label>
+        <input type="range" id="speed-pause" min="0.5" max="1.5" step="0.05">
+        <b id="speed-pause-val">0.75x</b>
+        <button id="speed-pause-reset" class="btn ghost" type="button">Reset</button>
+      </div>
       <button id="btn-resume" class="btn primary big" type="button">Keep racing</button>
     </div>
   </section>
@@ -317,6 +399,10 @@ code { font-family: var(--mono); font-weight: 800; background: #10241b; border: 
       <h3>Numbers you built</h3>
       <ul id="end-made" class="made"></ul>
       <p id="end-made-none" class="note" hidden></p>
+
+      <h3>Rewards</h3>
+      <p class="note" id="end-rewards-note"></p>
+      <div class="inventory" id="end-rewards"></div>
 
       <h3>Now you code it</h3>
       <p>This is real Python. Change the <code>101</code>, press Run, and watch Echo run it.</p>
@@ -385,6 +471,8 @@ const Level1Rules = {
     gateEverySeconds: 15,        // gates at 15s, 30s, 45s. The 60s gate is the finish.
     kaliAtSeconds: 45,           // the gate at this time is Kali's safety checkpoint
     boltPointsForFinishing: 10,  // a flat reward. Deliberately NOT tied to score.
+    targetMax: 8,                // numbers run 0 .. targetMax-1. 8 is every number 3 bits can make.
+    allGatesKali: false,         // Online Safety subject: every gate is a Kali question, not just 45s
     travelSeconds: 3.4,          // how long a bit takes to slide from the gate to Echo
     spawnEverySeconds: 1.05,
     neededBitChance: 0.6,        // how often a new bit is the one the player needs
@@ -404,6 +492,7 @@ const Level1Rules = {
       made: [],           // finished numbers, for the end-screen summary
       nextId: 1, spawnIn: 0.7, lastLane: -1, dry: 0,
       celebrate: 0, boost: 0, gatesPassed: 0, usedQuestions: [],
+      shieldActive: false,
     };
   },
 
@@ -430,7 +519,7 @@ const Level1Rules = {
     const nextGate = (s.gatesPassed + 1) * c.gateEverySeconds;
     if (nextGate < c.roundSeconds && elapsed >= nextGate) {
       s.gatesPassed++; s.bits = []; s.spawnIn = 0.8;
-      events.push({ type: 'gate', kind: nextGate === c.kaliAtSeconds ? 'kali' : 'binary', number: s.gatesPassed });
+      events.push({ type: 'gate', kind: (c.allGatesKali || nextGate === c.kaliAtSeconds) ? 'kali' : 'binary', number: s.gatesPassed });
       return events;
     }
 
@@ -481,6 +570,10 @@ const Level1Rules = {
         s.celebrate = c.celebrateSeconds; s.bits = [];
         events.push({ type: 'numberDone', decimal: s.target, binary });
       }
+    } else if (s.shieldActive) {
+      // A Shield power-up absorbs exactly one wrong catch: no life, no time lost.
+      s.shieldActive = false;
+      events.push({ type: 'shielded', lane: bit.lane });
     } else {
       const hint = this.hintFor(s);            // work the hint out BEFORE changing anything
       s.timeLeft = Math.max(0, s.timeLeft - c.wrongPenaltySeconds);
@@ -505,8 +598,9 @@ const Level1Rules = {
   },
 
   nextTarget(s) {
-    let n = rand(8);                          // 0 to 7: everything 3 bits can make
-    if (n === s.target) n = (n + 1 + rand(7)) % 8;
+    const max = this.config.targetMax;
+    let n = rand(max);
+    if (n === s.target) n = (n + 1 + rand(max - 1)) % max;
     s.target = n; s.slots = [];
     s.spawnIn = 0.1; s.dry = 2;      // send a helpful bit for the new number straight away
   },
@@ -556,9 +650,14 @@ const Level1Rules = {
         hint: 'Each slot has its own value: 4, then 2, then 1.',
       }),
     };
+    // Difficulty ramps with each gate: gate 1 asks about ideas ("how many digits?"),
+    // gate 2 asks you to read place value, gate 3+ asks you to build the bits yourself.
+    const tiers = [['digits', 'biggest'], ['place', 'read'], ['write', 'read']];
+    const tier = tiers[Math.min(s.gatesPassed, tiers.length) - 1] || tiers[tiers.length - 1];
     // Do not repeat a question type inside one round.
-    const fresh = Object.keys(makers).filter((k) => !s.usedQuestions.includes(k));
-    const kind = pick(fresh.length ? fresh : Object.keys(makers));
+    const fresh = tier.filter((k) => !s.usedQuestions.includes(k));
+    const anyFresh = Object.keys(makers).filter((k) => !s.usedQuestions.includes(k));
+    const kind = pick(fresh.length ? fresh : anyFresh.length ? anyFresh : Object.keys(makers));
     s.usedQuestions.push(kind);
     const q = makers[kind]();
     q.choices = shuffle(q.choices);
@@ -666,7 +765,181 @@ const Sound = {
       case 'gate': n(523, 0, 0.12, 'triangle'); n(659, 0.1, 0.12, 'triangle'); n(784, 0.2, 0.2, 'triangle'); break;
       case 'boost': n(330, 0, 0.35, 'sawtooth', 0.05, 990); break;
       case 'finish': n(523, 0, 0.12); n(659, 0.12, 0.12); n(784, 0.24, 0.12); n(1047, 0.36, 0.4); break;
+      case 'shield': n(220, 0, 0.1, 'square', 0.08); n(440, 0.08, 0.12, 'square', 0.06); break;
+      case 'reward': n(988, 0, 0.1); n(1318, 0.09, 0.18); break;
     }
+  },
+};
+
+
+/* ===================== 4b. REWARDS CATALOGUE =====================
+   Everything a player can earn. "cost" for a cosmetic is a points MILESTONE (it
+   unlocks itself the moment total points reach it - nothing is spent). "cost" for a
+   power-up is spent through Progress.spend(). No payments, no real-world value:
+   this is all just numbers in this device's localStorage.                           */
+const REWARDS = {
+  trim_mint: { kind: 'cosmetic', name: 'Mint Echo', cost: 0, earn: 'The default look.', effect: "Echo's usual green glow.", duration: null },
+  trim_rainbow: { kind: 'cosmetic', name: 'Rainbow Echo', cost: 0, earn: 'Pick it at onboarding - free today.', effect: "Cycles the ECHO glow through colour. Cosmetic only, Echo's shape never changes.", duration: null },
+  trim_gold: { kind: 'cosmetic', name: 'Gold Echo', cost: 150, earn: 'Unlocks automatically at 150 total points.', effect: "Recolors the ECHO glow gold.", duration: null },
+  powerup_shield: { kind: 'powerup', name: 'Shield', cost: 60, earn: 'Buy for 60 points.', effect: 'Your next wrong catch costs no life and no time.', duration: '1 use, then it is gone' },
+  powerup_rush: { kind: 'powerup', name: 'Rush', cost: 80, earn: 'Buy for 80 points.', effect: '+15% race speed, stacked on top of your speed setting.', duration: '20 seconds of racing' },
+  powerup_clock: { kind: 'powerup', name: 'Extra Time', cost: 50, earn: 'Buy for 50 points.', effect: 'Adds 5 seconds to the clock the moment your next race starts.', duration: '1 use, then it is gone' },
+};
+
+/* ===================== 4c. PROGRESS =====================
+   Guest progress, saved on THIS device only (localStorage). There is no account
+   server, so nothing here can sync between devices or survive clearing site data -
+   that would need a backend: an authenticated API this code could call instead of
+   localStorage, with the server (not the browser) deciding how many points a round
+   earned. Until that exists, every grant below is the local, best-effort version:
+   - points only ever move through grant()/spend(), never by writing storage directly
+   - grant() needs a unique "key" per reward (see Game.sessionId) and will not pay
+     the same key out twice, so a duplicated or replayed event can't double-credit
+   This stops accidental or naive tampering, not a determined user editing devtools
+   storage by hand - that needs a server to be unbeatable, which is the point above. */
+const Progress = {
+  KEY: 'ee_progress_v1',
+  data: null,
+  load() {
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(this.KEY) || 'null'); } catch { d = null; }
+    if (!d || typeof d !== 'object') d = {};
+    const points = Number(d.points);
+    this.data = {
+      points: Number.isFinite(points) && points >= 0 ? Math.floor(points) : 0,
+      unlocked: Array.isArray(d.unlocked) ? d.unlocked.filter((x) => typeof x === 'string' && REWARDS[x]) : ['trim_mint'],
+      grantedKeys: Array.isArray(d.grantedKeys) ? d.grantedKeys.filter((x) => typeof x === 'string').slice(-500) : [],
+      activePowerups: (d.activePowerups && typeof d.activePowerups === 'object') ? d.activePowerups : {},
+      avatar: typeof d.avatar === 'string' ? d.avatar : 'trim_mint',
+    };
+    if (!this.data.unlocked.includes('trim_mint')) this.data.unlocked.push('trim_mint');
+    return this.data;
+  },
+  save() { try { localStorage.setItem(this.KEY, JSON.stringify(this.data)); } catch {} },
+  // Returns the list of reward ids that just unlocked for free, if any.
+  checkMilestones() {
+    const newly = [];
+    for (const [id, r] of Object.entries(REWARDS)) {
+      if (r.kind === 'cosmetic' && r.cost > 0 && this.data.points >= r.cost && !this.data.unlocked.includes(id)) {
+        this.data.unlocked.push(id); newly.push(id);
+      }
+    }
+    if (newly.length) this.save();
+    return newly;
+  },
+  // Grants `amount` points for `key`, exactly once ever. Returns false (and grants
+  // nothing) if that key already paid out - that's the duplicate-prevention.
+  grant(key, amount) {
+    if (!key || this.data.grantedKeys.includes(key)) return false;
+    this.data.points = Math.max(0, Math.floor(this.data.points + amount));
+    this.data.grantedKeys.push(key);
+    if (this.data.grantedKeys.length > 500) this.data.grantedKeys = this.data.grantedKeys.slice(-500);
+    this.save();
+    return true;
+  },
+  canAfford(id) { const r = REWARDS[id]; return !!r && this.data.points >= r.cost; },
+  isUnlocked(id) { return this.data.unlocked.includes(id); },
+  hasActive(id) { return !!this.data.activePowerups[id]; },
+  unlockFree(id) { if (REWARDS[id] && !this.data.unlocked.includes(id)) { this.data.unlocked.push(id); this.save(); } },
+  // Buys a power-up with points. Cosmetics are never bought - they unlock at a
+  // milestone (checkMilestones) or are free at onboarding (unlockFree).
+  spend(id) {
+    const r = REWARDS[id];
+    if (!r || r.kind !== 'powerup' || !this.canAfford(id) || this.hasActive(id)) return false;
+    this.data.points -= r.cost;
+    this.data.activePowerups[id] = r.duration === '20 seconds of racing' ? 20 : 1;
+    this.save();
+    return true;
+  },
+  // Removes a one-use power-up (Shield, Extra Time) once it has done its job.
+  consume(id) {
+    if (!this.data.activePowerups[id]) return false;
+    delete this.data.activePowerups[id];
+    this.save();
+    return true;
+  },
+  // Counts down timed power-ups (Rush) in real wall-clock seconds, independent of
+  // the race-speed setting, so "20 seconds" always means 20 real seconds.
+  tick(dt) {
+    let changed = false;
+    for (const id of Object.keys(this.data.activePowerups)) {
+      if (REWARDS[id] && REWARDS[id].duration === '20 seconds of racing') {
+        this.data.activePowerups[id] -= dt;
+        if (this.data.activePowerups[id] <= 0) { delete this.data.activePowerups[id]; changed = true; }
+      }
+    }
+    if (changed) this.save();
+  },
+};
+
+
+/* ===================== 4d. ONBOARDING =====================
+   Subject -> Avatar -> Course -> Mission. Each pick maps to a small override of
+   Level1Rules.config (see Game.applyProfile), so this still plays Level 1 - it does
+   not fork a new level. Gameplay is paused the whole time (racing has not started
+   yet), and every choice works by keyboard (Tab + Enter/Space) or touch.           */
+const ONBOARD = {
+  subjects: [
+    { id: 'binary', label: 'Binary Numbers', icon: '\u{1F522}', sub: 'How computers count', overrides: { allGatesKali: false } },
+    { id: 'safety', label: 'Online Safety', icon: '\u{1F6E1}', sub: 'Smart choices online', overrides: { allGatesKali: true } },
+  ],
+  avatars: [
+    { id: 'trim_mint', label: 'Mint Echo', icon: '\u{1F7E2}', sub: 'The classic look' },
+    { id: 'trim_rainbow', label: 'Rainbow Echo', icon: '\u{1F308}', sub: 'Free today, cosmetic only' },
+  ],
+  courses: [
+    { id: 'explorer', label: 'Explorer', icon: '\u{1F9ED}', sub: 'More helpful bits', overrides: { neededBitChance: 0.72 } },
+    { id: 'trailblazer', label: 'Trailblazer', icon: '\u{1F680}', sub: 'Fewer freebies, faster bits', overrides: { neededBitChance: 0.45, spawnEverySeconds: 0.85 } },
+  ],
+  missions: [
+    { id: 'classic', label: 'Race to the Gate', icon: '\u{1F3C1}', sub: '60s, gate every 15s', overrides: { roundSeconds: 60, gateEverySeconds: 15, kaliAtSeconds: 45 } },
+    { id: 'sprint', label: 'Checkpoint Sprint', icon: '⏱', sub: '40s, gate every 10s', overrides: { roundSeconds: 40, gateEverySeconds: 10, kaliAtSeconds: 20 } },
+  ],
+};
+const Onboard = {
+  steps: ['subjects', 'avatars', 'courses', 'missions'],
+  titles: {
+    subjects: ['Pick a subject', 'What do you want to learn right now?'],
+    avatars: ['Pick your avatar', "Cosmetic only - Echo races the same either way."],
+    courses: ['Pick a course', 'Changes how often an easy, helpful bit shows up.'],
+    missions: ['Pick a mission', 'Changes the clock and how often gates appear.'],
+  },
+  i: 0, choice: {},
+  start() {
+    this.i = 0; this.choice = {};
+    UI.hide('screen-title');
+    UI.show('screen-onboard');     // show first: focusing a still-hidden element silently fails
+    this.render();
+  },
+  back() {
+    if (this.i === 0) { UI.hide('screen-onboard'); UI.show('screen-title'); return; }
+    this.i--; this.render();
+  },
+  pick(id) {
+    const key = this.steps[this.i];
+    this.choice[key] = id;
+    if (this.i < this.steps.length - 1) { this.i++; this.render(); }
+    else { UI.hide('screen-onboard'); Game.startWithProfile(this.choice); }
+  },
+  render() {
+    const key = this.steps[this.i], [h, note] = this.titles[key];
+    $('onboard-kicker').textContent = `Step ${this.i + 1} of ${this.steps.length}`;
+    $('onboard-h').textContent = h;
+    $('onboard-note').textContent = note;
+    [...$('onboard-steps').children].forEach((li, idx) => { li.className = idx < this.i ? 'done' : idx === this.i ? 'now' : ''; });
+    const grid = $('onboard-grid'); grid.textContent = '';
+    for (const opt of ONBOARD[key]) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn pick';
+      b.dataset.id = opt.id;
+      const ico = document.createElement('span'); ico.className = 'pick-ico'; ico.setAttribute('aria-hidden', 'true'); ico.textContent = opt.icon;
+      const label = document.createElement('span'); label.textContent = opt.label;
+      const sub = document.createElement('span'); sub.className = 'pick-sub'; sub.textContent = opt.sub;
+      b.append(ico, label, sub);
+      b.addEventListener('click', () => this.pick(opt.id));
+      grid.append(b);
+    }
+    $('screen-onboard').scrollTop = 0;
+    if (grid.firstElementChild) grid.firstElementChild.focus();
   },
 };
 
@@ -805,9 +1078,12 @@ const World = {
     this.ctx = canvas.getContext('2d');
     this.t = 0; this.scroll = 0; this.echoLane = 1; this.effects = [];
     this.cam = { zoom: 0.9, dim: 0.4 };
+    this.trim = 'trim_mint';
     this.resize();
     window.addEventListener('resize', () => this.resize());
   },
+
+  setTrim(id) { this.trim = id; },
 
   resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);   // sharp on phones without melting them
@@ -1121,10 +1397,13 @@ const World = {
     ctx.fillStyle = '#15161a'; oval(0, -76, 29, 9); ctx.fill();                     // the hood, folded behind his neck
     ctx.strokeStyle = '#6f757d'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(0, -70); ctx.lineTo(0, -6); ctx.stroke();            // zip
-    // ECHO in neon green
+    // ECHO glow. Cosmetic trim only: the Rainbow and Gold avatars just recolor this,
+    // nothing about Echo's locked silhouette ever changes.
     ctx.save();
-    ctx.shadowColor = '#00FF88'; ctx.shadowBlur = 9 * s;
-    ctx.fillStyle = '#00FF88'; ctx.font = `900 21px ${SANS}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const glow = this.trim === 'trim_rainbow' ? `hsl(${REDUCED_MOTION ? 150 : (this.t * 70) % 360},95%,55%)`
+      : this.trim === 'trim_gold' ? '#E8C547' : '#00FF88';
+    ctx.shadowColor = glow; ctx.shadowBlur = 9 * s;
+    ctx.fillStyle = glow; ctx.font = `900 21px ${SANS}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('ECHO', 0, -29);
     ctx.restore();
     // three hex badges: H, Si, Au
@@ -1219,6 +1498,7 @@ const UI = {
     }
     $('q-ask').addEventListener('click', () => { $('q-hint').hidden = false; });
     $('py-ask').addEventListener('click', () => { $('py-explain').hidden = !$('py-explain').hidden; });
+    $('title-sync-note').textContent = 'A real account and cross-device sync would need a backend to check in with.';
   },
 
   show(id) { $(id).hidden = false; },
@@ -1319,7 +1599,7 @@ const UI = {
     buttons[0].focus();
   },
 
-  showEnd(s, level) {
+  showEnd(s, level, justUnlocked) {
     const rules = level.rules;
     $('end-score').textContent = s.score;
     $('end-bolts').textContent = rules.config.boltPointsForFinishing;
@@ -1335,9 +1615,58 @@ const UI = {
     none.hidden = seen.size > 0;
     none.textContent = 'No full numbers this time, and that is OK. Next race, watch the 4, 2 and 1 slots.';
     $('py-explain').textContent = 'Echo says: ' + rules.python.explain;
+    $('end-rewards-note').textContent = `You now have ${Progress.data.points} points, saved as a guest on this device.`
+      + ((justUnlocked && justUnlocked.length) ? ' New: ' + justUnlocked.map((id) => REWARDS[id].name).join(', ') + '!' : '');
+    const box = $('end-rewards'); box.textContent = '';
+    for (const id of Progress.data.unlocked) this.appendRewardChip(box, id, { active: false });
+    for (const id of Object.keys(Progress.data.activePowerups)) this.appendRewardChip(box, id, { active: true });
     this.hide('hud'); this.show('screen-end');
     $('screen-end').scrollTop = 0;
     $('end-h').setAttribute('tabindex', '-1'); $('end-h').focus();
+  },
+
+  appendRewardChip(container, id, { active }) {
+    const r = REWARDS[id]; if (!r) return;
+    const chip = document.createElement('span'); chip.className = 'item-chip' + (active ? ' active' : '');
+    const dot = document.createElement('span'); dot.className = 'dot'; dot.setAttribute('aria-hidden', 'true');
+    const label = document.createElement('span'); label.textContent = r.name;
+    chip.append(dot, label);
+    if (active && typeof Progress.data.activePowerups[id] === 'number' && r.duration === '20 seconds of racing') {
+      const time = document.createElement('time'); time.textContent = Math.ceil(Progress.data.activePowerups[id]) + 's'; chip.append(time);
+    }
+    container.append(chip);
+  },
+
+  updatePointsLabel() { $('points-total').textContent = Progress.data.points; },
+
+  syncSpeedControls(v) {
+    for (const [range, label] of [['speed-title', 'speed-title-val'], ['speed-pause', 'speed-pause-val']]) {
+      if (parseFloat($(range).value) !== v) $(range).value = v;
+      $(label).textContent = v.toFixed(2) + 'x';
+    }
+  },
+
+  renderInventory() {
+    $('inv-points').textContent = Progress.data.points;
+    const items = $('inv-items'); items.textContent = '';
+    for (const id of Progress.data.unlocked) this.appendRewardChip(items, id, { active: false });
+
+    const shop = $('inv-shop'); shop.textContent = '';
+    for (const [id, r] of Object.entries(REWARDS)) {
+      if (r.kind !== 'powerup') continue;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn item-chip';
+      const active = Progress.hasActive(id);
+      b.disabled = active || !Progress.canAfford(id);
+      b.title = `${r.effect} Lasts: ${r.duration}.`;
+      b.textContent = active ? `${r.name} (active)` : `${r.name} - ${r.cost} pts`;
+      b.addEventListener('click', () => { if (Progress.spend(id)) this.renderInventory(); });
+      shop.append(b);
+    }
+
+    const active = $('inv-active'); active.textContent = '';
+    const activeIds = Object.keys(Progress.data.activePowerups);
+    $('inv-none').hidden = activeIds.length > 0;
+    for (const id of activeIds) this.appendRewardChip(active, id, { active: true });
   },
 
   setPyStatus(state) {
@@ -1384,13 +1713,26 @@ const UI = {
 /* ===================== 9. GAME LOOP =====================
    The conductor. Every frame: ask the level's rules what happened, hand each event
    to Sound and UI, then draw. It also owns the one "mode" the game is in.            */
+// A frozen snapshot of Level 1's default numbers, taken once at load. Onboarding
+// never edits this - it edits Level1Rules.config, always starting fresh from here,
+// so picks from an earlier round can never leak into a later one.
+const BASE_L1_CONFIG = { ...Level1Rules.config };
+const SPEED_KEY = 'ee_speed_v1', DEFAULT_SPEED = 0.75;
+const loadSpeed = () => { const v = parseFloat(localStorage.getItem(SPEED_KEY)); return Number.isFinite(v) ? clamp(v, 0.5, 1.5) : DEFAULT_SPEED; };
+const saveSpeed = (v) => { try { localStorage.setItem(SPEED_KEY, String(v)); } catch {} };
+
 const Game = {
   mode: 'title',    // 'title' | 'racing' | 'question' | 'paused' | 'ended'
   level: null, state: null, lastTime: 0,
+  speed: DEFAULT_SPEED,     // 0.5 - 1.5, persisted. Multiplies dt, so it is frame-rate independent by construction.
+  avatarTrim: 'trim_mint', sessionId: null,
 
   boot(assets) {
     UI.init(assets);
     World.init($('world'));
+    Progress.load();
+    this.speed = loadSpeed();
+    World.setTrim(Progress.data.avatar);
     Input.init({
       canvas: $('world'),
       laneAt: (x) => World.laneAt(x),
@@ -1400,13 +1742,22 @@ const Game = {
     const first = LEVELS.find((level) => level.built);
     $('code').value = first.rules.python.starter;
     $('py-out').textContent = 'Press Run to see what Python prints.';
-    $('btn-play').addEventListener('click', () => this.start(first.id));
-    $('btn-again').addEventListener('click', () => this.start(this.level.id));     // "Play again": a fresh round
+    $('btn-play').addEventListener('click', () => Onboard.start());
+    $('btn-again').addEventListener('click', () => Onboard.start());     // "Play again": choose fresh, then a fresh round
     $('btn-pause').addEventListener('click', () => this.pause());
     $('btn-resume').addEventListener('click', () => this.resume());
     $('btn-sound').addEventListener('click', () => UI.setSound(Sound.toggle()));
     $('py-run').addEventListener('click', () => UI.runPython(this.level.rules));
     $('py-save').addEventListener('click', () => UI.savePython(this.level.rules));
+    $('btn-onboard-back').addEventListener('click', () => Onboard.back());
+    $('btn-inventory').addEventListener('click', () => { UI.renderInventory(); UI.hide('screen-title'); UI.show('screen-inventory'); });
+    $('btn-inventory-close').addEventListener('click', () => { UI.hide('screen-inventory'); UI.show('screen-title'); });
+    this.wireSpeedControl('speed-title', 'speed-title-val');
+    this.wireSpeedControl('speed-pause', 'speed-pause-val');
+    $('speed-title-reset').addEventListener('click', () => this.setSpeed(DEFAULT_SPEED));
+    $('speed-pause-reset').addEventListener('click', () => this.setSpeed(DEFAULT_SPEED));
+    UI.syncSpeedControls(this.speed);
+    UI.updatePointsLabel();
     // Leaving the tab pauses the race, so the clock never runs while nobody is looking.
     document.addEventListener('visibilitychange', () => { if (document.hidden && this.mode === 'racing') this.pause(); });
 
@@ -1416,16 +1767,46 @@ const Game = {
     requestAnimationFrame((time) => this.frame(time));
   },
 
+  wireSpeedControl(rangeId, labelId) {
+    $(rangeId).addEventListener('input', (e) => this.setSpeed(parseFloat(e.target.value)));
+  },
+  setSpeed(v) {
+    this.speed = clamp(Math.round(v * 100) / 100, 0.5, 1.5);
+    saveSpeed(this.speed);
+    UI.syncSpeedControls(this.speed);
+  },
+
   setMode(mode) { this.mode = mode; Input.steering = mode === 'racing'; },
+
+  // Turns an onboarding choice set into Level1Rules.config overrides, always
+  // starting from the frozen defaults so an earlier mission's settings can't stick.
+  applyProfile(choice) {
+    const merged = { ...BASE_L1_CONFIG };
+    for (const group of Onboard.steps) {
+      const opt = (ONBOARD[group] || []).find((o) => o.id === choice[group]);
+      if (opt && opt.overrides) Object.assign(merged, opt.overrides);
+    }
+    Object.assign(Level1Rules.config, merged);
+    this.avatarTrim = choice.avatars || 'trim_mint';
+    if (this.avatarTrim === 'trim_rainbow') Progress.unlockFree('trim_rainbow');
+    Progress.data.avatar = this.avatarTrim; Progress.save();
+    World.setTrim(this.avatarTrim);
+  },
+  startWithProfile(choice) {
+    this.applyProfile(choice);
+    this.start(1);
+  },
 
   start(levelId) {
     const level = LEVELS.find((l) => l.id === levelId);
     if (!level || !level.built) return;            // placeholder levels cannot be started
     this.level = level;
     this.state = level.rules.newRound();
+    this.sessionId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${rand(1e9)}`;
+    if (Progress.hasActive('powerup_clock')) { this.state.timeLeft += 5; Progress.consume('powerup_clock'); }
     Input.lane = 1;
     UI.shown = {};
-    UI.hide('screen-title'); UI.hide('screen-end'); UI.hide('screen-pause'); UI.show('hud');
+    UI.hide('screen-title'); UI.hide('screen-end'); UI.hide('screen-pause'); UI.hide('screen-onboard'); UI.show('hud');
     UI.updateHud(this.state, level.rules);
     UI.coach(`Make ${this.state.target}. The slots are worth 4, 2 and 1.`);
     this.setMode('racing');
@@ -1436,9 +1817,15 @@ const Game = {
   resume() { UI.hide('screen-pause'); this.setMode('racing'); document.activeElement.blur(); },
 
   frame(time) {
-    const dt = Math.min(0.05, (time - this.lastTime) / 1000 || 0);   // never jump more than 1/20s (e.g. after a pause)
+    const rawDt = Math.min(0.05, (time - this.lastTime) / 1000 || 0);   // never jump more than 1/20s (e.g. after a pause)
     this.lastTime = time;
+    // Race speed (and a Rush power-up on top of it) scales simulated time, not just
+    // drawing, so slower really is slower: the same bit takes longer to arrive.
+    const speedMul = this.speed * (Progress.hasActive('powerup_rush') ? 1.15 : 1);
+    const dt = rawDt * speedMul;
     if (this.mode === 'racing') {
+      if (this.state) this.state.shieldActive = Progress.hasActive('powerup_shield');
+      Progress.tick(rawDt);     // power-up countdowns run in real seconds, not race-speed seconds
       for (const event of this.level.rules.update(this.state, dt, Input.lane)) this.handle(event);
       UI.updateHud(this.state, this.level.rules);
     }
@@ -1473,23 +1860,38 @@ const Game = {
         World.addEffect(e.lane, `-${rules.config.wrongPenaltySeconds}s`, '#FFC247');
         UI.coach(e.hint + (e.recharged ? ' Lives recharged!' : ''), 'warn');
         break;
+      case 'shielded':
+        Sound.play('shield');
+        Progress.consume('powerup_shield');
+        World.addEffect(e.lane, 'Shielded!', '#8FB4FF');
+        UI.coach('Your Shield took that hit. No life or time lost.');
+        break;
       case 'gate': {
         this.setMode('question');
         Sound.play('gate');
         const q = e.kind === 'kali' ? rules.makeKaliQuestion(s) : rules.makeBinaryQuestion(s);
         UI.showQuestion(q, e, (correct) => {
           rules.answerGate(s, correct);
-          if (correct) { Sound.play('boost'); UI.coach('Speed boost!'); }
-          else UI.coach('The gate is open. Keep going!');
+          if (correct) {
+            Sound.play('boost'); UI.coach('Speed boost!');
+            if (Progress.grant(`gate:${this.sessionId}:${e.number}`, 20)) {
+              UI.updatePointsLabel();
+              if (Progress.checkMilestones().length) Sound.play('reward');
+            }
+          } else UI.coach('The gate is open. Keep going!');
           this.setMode('racing');                  // right or wrong, the race goes on
         });
         break;
       }
-      case 'finish':
+      case 'finish': {
         this.setMode('ended');
         Sound.play('finish');
-        UI.showEnd(s, this.level);
+        Progress.grant(`finish:${this.sessionId}`, rules.config.boltPointsForFinishing);
+        const justUnlocked = Progress.checkMilestones();
+        UI.updatePointsLabel();
+        UI.showEnd(s, this.level, justUnlocked);
         break;
+      }
     }
   },
 };
